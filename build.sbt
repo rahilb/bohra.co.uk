@@ -1,6 +1,6 @@
 import NativePackagerKeys._
 
-packageArchetype.java_application
+packageArchetype.java_server
 
 name := """goodnews"""
 

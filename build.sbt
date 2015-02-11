@@ -15,6 +15,5 @@ libraryDependencies ++= Seq(
   "io.spray"              %%  "spray-can"             % sprayV,
   "io.spray"              %%  "spray-routing"         % sprayV,
   "com.typesafe.akka"     %%  "akka-actor"            % akkaV,
-  "com.twitter" % "finagle-http_2.10" % "6.18.0",
   "postgresql" % "postgresql" % "9.0-801.jdbc4"
 )

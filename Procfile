@@ -1,1 +1,1 @@
-web: target/universal/stage/bin/good-news
+web: target/universal/stage/bin/goodnews

@@ -1,22 +1,37 @@
 package com.arhob
 
 import akka.actor.ActorSystem
-import spray.routing.{RejectionHandler, SimpleRoutingApp}
-import util.Properties
+import akka.http.scaladsl.Http
+import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.server.ExceptionHandler
+import akka.stream.{ActorFlowMaterializer, FlowMaterializer}
+import scala.util.Properties
+import scala.concurrent.ExecutionContextExecutor
 
-object Server extends SimpleRoutingApp with App {
-  implicit val system = ActorSystem("actor-system")
-  val port = Integer.parseInt(Properties.envOrElse("PORT", "8080"))
+trait HomepageService {
+
+  implicit val system: ActorSystem
+  implicit def executor: ExecutionContextExecutor
+  implicit val materializer: FlowMaterializer
+
   val homepage = getFromResource("homepage.html")
-  val rejectionHandler = RejectionHandler {
-    case r =>
-      homepage
+
+  val exceptionHandler = ExceptionHandler {
+    case t: Throwable => homepage
   }
-  startServer(interface = "0.0.0.0", port = port) {
-    handleRejections(rejectionHandler) {
+
+  val routes = {
+    handleExceptions(exceptionHandler) {
       get {
         homepage
       }
     }
   }
+}
+
+object AkkaHttpServer extends App with HomepageService {
+  override implicit val system: ActorSystem = ActorSystem()
+  override implicit def executor: ExecutionContextExecutor = system.dispatcher
+  override implicit val materializer: FlowMaterializer = ActorFlowMaterializer()
+  Http().bindAndHandle(routes, "0.0.0.0", Integer.parseInt(Properties.envOrElse("PORT", "8080")))
 }

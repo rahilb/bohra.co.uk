@@ -1,5 +1,3 @@
-
-
 packageArchetype.java_server
 
 name := """bohracouk"""
